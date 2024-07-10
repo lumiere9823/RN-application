@@ -1,49 +1,64 @@
-import React from "react";
-import { Button, StyleSheet, TextInput, View, Text } from "react-native";
+import { useState } from "react";
+import { View, TextInput, Button, StyleSheet, Modal } from "react-native";
 
-const GoalInput = (props) => {
+function GoalInput(props) {
+  const [enteredGoalText, setEnteredGoalText] = useState("");
+
+  function goalInputHandler(enteredText) {
+    setEnteredGoalText(enteredText);
+  }
+
+  function addGoalHandler() {
+    props.onAddGoal(enteredGoalText);
+    setEnteredGoalText("");
+  }
+
   return (
-    <View style={styles.container}>
+    <Modal visible={props.visible} animationType="slide">
       <View style={styles.inputContainer}>
         <TextInput
-          style={styles.input}
-          value={props.value}
-          onChangeText={props.inputHandler}
-          placeholder="Your Goal"
+          style={styles.textInput}
+          placeholder="Your course goal!"
+          onChangeText={goalInputHandler}
+          value={enteredGoalText}
         />
-        <Button title="Add" onPress={props.saveText} />
+        <View style={styles.buttonContainer}>
+          <View style={styles.button}>
+            <Button title="Add Goal" onPress={addGoalHandler} />
+          </View>
+          <View style={styles.button}>
+            <Button title="Cancel" onPress={props.onCancel} />
+          </View>
+        </View>
       </View>
-      {props.error !== "" && (
-        <Text style={styles.errorText}>{props.error}</Text>
-      )}
-    </View>
+    </Modal>
   );
-};
-
-const styles = StyleSheet.create({
-  container: {
-    flexDirection: "column",
-    borderBottomColor: "black",
-    borderBottomWidth: 1,
-  },
-  inputContainer: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    paddingBottom: 20,
-    paddingHorizontal: 20,
-  },
-  input: {
-    borderColor: "black",
-    borderWidth: 1,
-    width: "80%",
-    marginBottom: 10,
-    padding: 8,
-  },
-  errorText: {
-    color: "red",
-    marginBottom: 10,
-  },
-});
+}
 
 export default GoalInput;
+
+const styles = StyleSheet.create({
+  inputContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    marginBottom: 24,
+    padding: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: "#cccccc",
+  },
+  textInput: {
+    borderWidth: 1,
+    borderColor: "#cccccc",
+    width: "100%",
+    padding: 8,
+  },
+  buttonContainer: {
+    marginTop: 16,
+    flexDirection: "row",
+  },
+  button: {
+    width: 100,
+    marginHorizontal: 8,
+  },
+});

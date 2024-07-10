@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { StyleSheet, View, FlatList } from "react-native";
+import { StyleSheet, View, FlatList, Button } from "react-native";
 import Toast, { BaseToast, ErrorToast } from "react-native-toast-message";
 import GoalItem from "./components/GoalItem";
 import GoalInput from "./components/GoalInput";
@@ -56,69 +56,110 @@ const toastConfig = {
 };
 
 const App = () => {
-  const [value, setValue] = useState("");
-  const [goals, setGoals] = useState([]);
-  const [error, setError] = useState("");
-  const [showModal, setShowModal] = useState(false);
+  const [modalIsVisible, setModalIsVisible] = useState(false);
+  const [courseGoals, setCourseGoals] = useState([]);
 
-  const inputHandler = (text) => {
-    setValue(text);
-  };
+  function startAddGoalHandler() {
+    setModalIsVisible(true);
+  }
 
-  const saveText = () => {
-    if (value.trim() === "") {
-      setError("Goal cannot be empty!");
+  // const addGoalHandler = () => {
+  //   if (value.trim() === "") {
+  //     setError("Goal cannot be empty!");
+  //     Toast.show({
+  //       type: "error",
+  //       text1: "Error",
+  //       text2: "Goal cannot be empty!",
+  //       visibilityTime: 2000,
+  //     });
+  //     return;
+  //   }
+  //   setGoals((currentGoals) => [
+  //     ...currentGoals,
+  //     { text: value, id: Math.random().toString() },
+  //   ]);
+  //   setValue("");
+  //   setError("");
+  //   Toast.show({
+  //     type: "success",
+  //     text1: "Success",
+  //     text2: "Goal added successfully!",
+  //     visibilityTime: 2000,
+  //   });
+  // };
+
+  function addGoalHandler(enteredGoalText) {
+    if (enteredGoalText.trim() === "") {
       Toast.show({
         type: "error",
         text1: "Error",
         text2: "Goal cannot be empty!",
-        visibilityTime: 4000,
+        visibilityTime: 1000,
       });
+      endAddGoalHandler();
       return;
     }
-    setGoals((currentGoals) => [
-      ...currentGoals,
-      { text: value, id: Math.random().toString() },
+    setCourseGoals((currentCourseGoals) => [
+      ...currentCourseGoals,
+      { text: enteredGoalText, id: Math.random().toString() },
     ]);
-    setValue("");
-    setError("");
     Toast.show({
       type: "success",
       text1: "Success",
       text2: "Goal added successfully!",
-      visibilityTime: 4000,
+      visibilityTime: 1000,
     });
-  };
+    endAddGoalHandler();
+  }
 
-  const deleteGoal = (id) => {
-    setGoals((currentGoals) => currentGoals.filter((goal) => goal.id !== id));
+  function deleteGoalHandler(id) {
+    setCourseGoals((currentCourseGoals) => {
+      return currentCourseGoals.filter((goal) => goal.id !== id);
+    });
     Toast.show({
       type: "info",
       text1: "Deleted",
       text2: "Goal deleted successfully!",
-      visibilityTime: 4000,
+      visibilityTime: 1000,
     });
-  };
+  }
+
+  function startAddGoalHandler() {
+    setModalIsVisible(true);
+  }
+
+  function endAddGoalHandler() {
+    setModalIsVisible(false);
+  }
 
   return (
     <View style={styles.appContainer}>
+      <Button
+        title="Add New Goal"
+        color="#5e0acc"
+        onPress={startAddGoalHandler}
+      />
       <GoalInput
-        inputHandler={inputHandler}
-        saveText={saveText}
-        error={error}
-        value={value}
+        visible={modalIsVisible}
+        onAddGoal={addGoalHandler}
+        onCancel={endAddGoalHandler}
       />
       <View style={styles.goalsContainer}>
         <FlatList
-          data={goals}
-          renderItem={({ item }) => (
-            <GoalItem
-              text={item.text}
-              id={item.id}
-              deleteGoal={deleteGoal}
-            />
-          )}
-          keyExtractor={(item) => item.id}
+          data={courseGoals}
+          renderItem={(itemData) => {
+            return (
+              <GoalItem
+                text={itemData.item.text}
+                id={itemData.item.id}
+                onDeleteItem={deleteGoalHandler}
+              />
+            );
+          }}
+          keyExtractor={(item, index) => {
+            return item.id;
+          }}
+          alwaysBounceVertical={false}
         />
       </View>
       <Toast config={toastConfig} ref={(ref) => Toast.setRef(ref)} />
@@ -128,13 +169,12 @@ const App = () => {
 
 const styles = StyleSheet.create({
   appContainer: {
-    paddingTop: 50,
     flex: 1,
-    paddingHorizontal: 20,
+    paddingTop: 50,
+    paddingHorizontal: 16,
   },
   goalsContainer: {
-    flex: 1,
-    marginTop: 20,
+    flex: 5,
   },
 });
 

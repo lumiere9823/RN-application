@@ -1,7 +1,7 @@
 import React from "react";
 import { Button, StyleSheet, TextInput, View, Text } from "react-native";
 
-const CoalInput = (props) => {
+const GoalInput = (props) => {
   return (
     <View style={styles.container}>
       <View style={styles.inputContainer}>
@@ -46,4 +46,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default CoalInput;
+export default GoalInput;

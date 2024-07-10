@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { StyleSheet, View, FlatList } from "react-native";
 import Toast, { BaseToast, ErrorToast } from "react-native-toast-message";
 import GoalItem from "./components/GoalItem";
-import CoalInput from "./components/CoalInput";
+import GoalInput from "./components/GoalInput";
 
 const toastConfig = {
   success: (props) => (
@@ -55,23 +55,24 @@ const toastConfig = {
   ),
 };
 
-export default function App() {
+const App = () => {
   const [value, setValue] = useState("");
   const [goals, setGoals] = useState([]);
   const [error, setError] = useState("");
+  const [showModal, setShowModal] = useState(false);
 
-  function inputHandler(text) {
+  const inputHandler = (text) => {
     setValue(text);
-  }
+  };
 
-  function saveText() {
+  const saveText = () => {
     if (value.trim() === "") {
       setError("Goal cannot be empty!");
       Toast.show({
         type: "error",
         text1: "Error",
         text2: "Goal cannot be empty!",
-        visibilityTime: 4000, // Thời gian hiển thị là 4000ms (4 giây)
+        visibilityTime: 4000,
       });
       return;
     }
@@ -85,23 +86,23 @@ export default function App() {
       type: "success",
       text1: "Success",
       text2: "Goal added successfully!",
-      visibilityTime: 4000, // Thời gian hiển thị là 4000ms (4 giây)
+      visibilityTime: 4000,
     });
-  }
+  };
 
-  function deleteGoal(id) {
+  const deleteGoal = (id) => {
     setGoals((currentGoals) => currentGoals.filter((goal) => goal.id !== id));
     Toast.show({
       type: "info",
       text1: "Deleted",
       text2: "Goal deleted successfully!",
-      visibilityTime: 4000, // Thời gian hiển thị là 4000ms (4 giây)
+      visibilityTime: 4000,
     });
-  }
+  };
 
   return (
     <View style={styles.appContainer}>
-      <CoalInput
+      <GoalInput
         inputHandler={inputHandler}
         saveText={saveText}
         error={error}
@@ -110,10 +111,10 @@ export default function App() {
       <View style={styles.goalsContainer}>
         <FlatList
           data={goals}
-          renderItem={(goal) => (
+          renderItem={({ item }) => (
             <GoalItem
-              text={goal.item.text}
-              id={goal.item.id}
+              text={item.text}
+              id={item.id}
               deleteGoal={deleteGoal}
             />
           )}
@@ -123,7 +124,7 @@ export default function App() {
       <Toast config={toastConfig} ref={(ref) => Toast.setRef(ref)} />
     </View>
   );
-}
+};
 
 const styles = StyleSheet.create({
   appContainer: {
@@ -136,3 +137,5 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
 });
+
+export default App;
